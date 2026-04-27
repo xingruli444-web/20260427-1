@@ -12,7 +12,11 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   
   // 擷取影像，並加入回呼函式確保啟動成功
-  capture = createCapture(VIDEO, function(stream) {
+  // 使用物件形式定義 constraints，有助於提高某些瀏覽器的相容性
+  capture = createCapture({
+    video: true,
+    audio: false
+  }, function(stream) {
     console.log("攝影機已就緒");
     // 確定影像開啟後再開始偵測手部
     handPose.detectStart(capture, gotHands);
