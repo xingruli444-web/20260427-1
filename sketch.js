@@ -48,12 +48,29 @@ function draw() {
   // 將擷取的影像畫在畫布中間
   image(capture, x, y, imgW, imgH);
 
+  // 顯示除錯資訊：偵測到的手部數量
+  fill(0);
+  noStroke();
+  textSize(20);
+  textAlign(LEFT, TOP);
+  text("偵測到手部數量: " + hands.length, 20, 20);
+
   // 繪製手部線條
   if (hands.length > 0) {
     hands.forEach(hand => {
       if (hand.keypoints) {
-        stroke(255, 0, 0); // 將線條改為紅色，方便在紫色背景上辨識
-        strokeWeight(3);
+        // 1. 繪製關鍵點（點）
+        hand.keypoints.forEach(keypoint => {
+          let px = map(keypoint.x, 0, capture.width, x, x + imgW);
+          let py = map(keypoint.y, 0, capture.height, y, y + imgH);
+          fill(0, 255, 0); // 綠色點
+          noStroke();
+          circle(px, py, 10); // 畫出點
+        });
+
+        // 2. 繪製骨架（線）
+        stroke(255, 255, 0); // 改用黃色線條，對比更強
+        strokeWeight(2);
         noFill();
 
         // 根據需求定義關鍵點群組
