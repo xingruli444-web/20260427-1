@@ -1,8 +1,8 @@
 html, body {
   margin: 0;
   padding: 0;
+  overflow: hidden; /* 隱藏捲軸 */
 }
-
 canvas {
-  display: block;
+  display: block; /* 移除畫布下方的微小間隙 */
 }
