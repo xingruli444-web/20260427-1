@@ -1,6 +1,35 @@
 let capture;
 let handPose;
 let hands = [];
+let bubbles = [];
+
+// 水泡類別
+class Bubble {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.size = random(10, 25);
+    this.speed = random(2, 5);
+    this.alpha = 200; // 初始透明度
+    this.isDead = false;
+  }
+
+  update() {
+    this.y -= this.speed; // 往上升
+    this.alpha -= 2;      // 隨上升變淡
+    if (this.alpha <= 0 || this.y < 0) this.isDead = true; // 破掉條件
+  }
+
+  display() {
+    noFill();
+    stroke(255, 255, 255, this.alpha);
+    strokeWeight(1.5);
+    circle(this.x, this.y, this.size);
+    fill(255, 255, 255, this.alpha * 0.3);
+    noStroke();
+    circle(this.x - this.size * 0.2, this.y - this.size * 0.2, this.size * 0.2); // 高光
+  }
+}
 
 function preload() {
   // 載入 handPose 模型
@@ -48,9 +77,15 @@ function draw() {
   // 將擷取的影像畫在畫布中間
   image(capture, x, y, imgW, imgH);
 
-  // 顯示除錯資訊：偵測到的手部數量
+  // 繪製畫布中間的文字
   fill(0);
   noStroke();
+  textSize(64);
+  textAlign(CENTER, CENTER);
+  text("414730365李幸茹", width / 2, height / 2);
+
+  // 顯示除錯資訊：偵測到的手部數量
+  fill(0, 150);
   textSize(20);
   textAlign(LEFT, TOP);
   text("偵測到手部數量: " + hands.length, 20, 20);
@@ -98,8 +133,29 @@ function draw() {
             }
           }
         });
+
+        // 3. 在指尖 (4, 8, 12, 16, 20) 產生水泡
+        let tips = [4, 8, 12, 16, 20];
+        tips.forEach(idx => {
+          let tip = hand.keypoints[idx];
+          let tx = map(tip.x, 0, capture.width, x, x + imgW);
+          let ty = map(tip.y, 0, capture.height, y, y + imgH);
+          // 每一秒約產生數個水泡，避免過多
+          if (frameCount % 3 === 0) {
+            bubbles.push(new Bubble(tx, ty));
+          }
+        });
       }
     });
+  }
+
+  // 更新與繪製水泡
+  for (let i = bubbles.length - 1; i >= 0; i--) {
+    bubbles[i].update();
+    bubbles[i].display();
+    if (bubbles[i].isDead) {
+      bubbles.splice(i, 1); // 移除破掉的水泡
+    }
   }
 }
 
