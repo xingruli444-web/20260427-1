@@ -77,13 +77,6 @@ function draw() {
   // 將擷取的影像畫在畫布中間
   image(capture, x, y, imgW, imgH);
 
-  // 繪製畫布中間的文字
-  fill(0);
-  noStroke();
-  textSize(64);
-  textAlign(CENTER, CENTER);
-  text("414730365李幸茹", width / 2, height / 2);
-
   // 顯示除錯資訊：偵測到的手部數量
   fill(0, 150);
   textSize(20);
@@ -157,6 +150,14 @@ function draw() {
       bubbles.splice(i, 1); // 移除破掉的水泡
     }
   }
+
+  // 繪製畫布中間的文字（置於最後以確保在最上層）
+  fill(0);
+  noStroke();
+  textSize(64);
+  textFont('sans-serif');
+  textAlign(CENTER, CENTER);
+  text("414730365李幸茹", width / 2, height / 2);
 }
 
 function gotHands(results) {
