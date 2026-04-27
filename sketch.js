@@ -46,34 +46,39 @@ function draw() {
 
   // 繪製手部線條
   if (hands.length > 0) {
-    for (let i = 0; i < hands.length; i++) {
-      let hand = hands[i];
-      stroke(0); // 線條顏色設為黑色
-      strokeWeight(2);
-      
-      // 定義需要串接的線段群組
-      let fingerGroups = [
-        [0, 1, 2, 3, 4],     // 大拇指
-        [5, 6, 7, 8],        // 食指
-        [9, 10, 11, 12],     // 中指
-        [13, 14, 15, 16],    // 無名指
-        [17, 18, 19, 20]     // 小指
-      ];
+    hands.forEach(hand => {
+      if (hand.keypoints) {
+        stroke(255, 0, 0); // 將線條改為紅色，方便在紫色背景上辨識
+        strokeWeight(3);
+        noFill();
 
-      for (let group of fingerGroups) {
-        for (let j = 0; j < group.length - 1; j++) {
-          let p1 = hand.keypoints[group[j]];
-          let p2 = hand.keypoints[group[j + 1]];
+        // 根據需求定義關鍵點群組
+        let fingerGroups = [
+          [0, 1, 2, 3, 4],    // 大拇指
+          [5, 6, 7, 8],       // 食指
+          [9, 10, 11, 12],    // 中指
+          [13, 14, 15, 16],   // 無名指
+          [17, 18, 19, 20]    // 小指
+        ];
 
-          // 將原始影像座標映射到畫布上的縮放位置
-          let x1 = map(p1.x, 0, capture.width, x, x + imgW);
-          let y1 = map(p1.y, 0, capture.height, y, y + imgH);
-          let x2 = map(p2.x, 0, capture.width, x, x + imgW);
-          let y2 = map(p2.y, 0, capture.height, y, y + imgH);
-          line(x1, y1, x2, y2);
-        }
+        fingerGroups.forEach(group => {
+          for (let j = 0; j < group.length - 1; j++) {
+            let p1 = hand.keypoints[group[j]];
+            let p2 = hand.keypoints[group[j + 1]];
+
+            if (p1 && p2) {
+              // 關鍵：將偵測到的座標映射到畫布中間那張縮放影像的位置
+              let x1 = map(p1.x, 0, capture.width, x, x + imgW);
+              let y1 = map(p1.y, 0, capture.height, y, y + imgH);
+              let x2 = map(p2.x, 0, capture.width, x, x + imgW);
+              let y2 = map(p2.y, 0, capture.height, y, y + imgH);
+
+              line(x1, y1, x2, y2);
+            }
+          }
+        });
       }
-    }
+    });
   }
 }
 
